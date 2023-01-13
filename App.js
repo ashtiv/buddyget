@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
+import Dashboard from './Dashboard';
 
 function HomeScreen() {
   return (
@@ -28,6 +29,11 @@ function App() {
           name="Signup"
           component={SignupForm}
           options={{ title: 'Sign Up' }}
+        />
+        <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{ title: 'Dashboard' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

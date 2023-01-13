@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from './firebase';
 
 function SignupForm() {
     const [name, setName] = useState('');
@@ -10,8 +12,15 @@ function SignupForm() {
     const navigation = useNavigation();
 
     function handleSignup() {
-        // Validate name, email, and password
-        // Send a request to the server to create a new account
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                navigation.navigate('Dashboard');
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
     }
 
     function handleLogin() {
