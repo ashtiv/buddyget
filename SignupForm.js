@@ -13,8 +13,7 @@ function SignupForm() {
 
     function handleSignup() {
         createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
+            .then(() => {
                 navigation.navigate('Dashboard');
             })
             .catch((error) => {

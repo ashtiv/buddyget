@@ -10,15 +10,16 @@ function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
-    function handleLogin() {
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
+
+    async function handleLogin() {
+        await signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
                 navigation.navigate('Dashboard');
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                console.log(errorMessage, " eeeeeeeee")
             });
     }
 

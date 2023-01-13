@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -15,8 +15,12 @@ const firebaseConfig = {
     appId: "1:454714096775:web:4b747b91009d9af6568c22",
     measurementId: "G-QNMZP9XKGQ"
 };
-
+async function setupEmulators(auth) {
+    const authUrl = 'http://127.0.0.1:9099'
+    await fetch(authUrl)
+    connectAuthEmulator(auth, authUrl)
+}
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
+setupEmulators();
 export { auth };
