@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import Calendar from 'react-native-calendar';
 
 const Dashboard = () => {
@@ -13,12 +13,24 @@ const Dashboard = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Monthly Budget</Text>
-            <Text style={styles.text}>{budget}</Text>
-            <Text style={styles.header}>Average Daily Spend</Text>
-            <Text style={styles.text}>{averageDaily}</Text>
+            <View style={styles.headerContainer}>
+                <Text style={styles.header}>Monthly Budget</Text>
+                <Image
+                    // source={require('path/to/budget-icon.png')}
+                    style={styles.icon}
+                />
+            </View>
+            <Text style={styles.budget}>{budget}</Text>
+            <View style={styles.headerContainer}>
+                <Text style={styles.header}>Average Daily Spend</Text>
+                <Image
+                    // source={require('path/to/money-icon.png')}
+                    style={styles.icon}
+                />
+            </View>
+            <Text style={styles.average}>{averageDaily}</Text>
             <Calendar
-                style={{ height: 300, width: 300 }}
+                style={styles.calendar}
                 selectedDate={selectedDate}
                 onConfirm={date => setSelectedDate(date)}
             />
@@ -28,19 +40,40 @@ const Dashboard = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        backgroundColor: '#f2f2f2',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
     },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
     header: {
         fontSize: 20,
-        marginBottom: 10,
+        marginRight: 10,
+        color: '#333'
     },
-    text: {
+    icon: {
+        width: 25,
+        height: 25,
+    },
+    budget: {
         fontSize: 18,
+        color: 'green',
         marginBottom: 10,
     },
+    average: {
+        fontSize: 18,
+        color: 'red',
+        marginBottom: 10,
+    },
+    calendar: {
+        flex: 1,
+        width: '100%',
+        marginTop: 10,
+    }
 });
 
 export default Dashboard;
