@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -26,6 +26,14 @@ function SignupForm() {
     function handleLogin() {
         navigation.navigate('Login');
     }
+
+    const styles = StyleSheet.create({
+        link: {
+            color: 'blue',
+            textDecorationLine: 'underline',
+            fontSize: 20,
+        },
+    });
 
     return (
         <View style={{ padding: 24 }}>
@@ -63,7 +71,7 @@ function SignupForm() {
                 <Button title="Create account" onPress={handleSignup} />
             </View>
             <View style={{ marginBottom: 16 }}>
-                <Button title="Log in" onPress={handleLogin} />
+                <Text style={styles.link} onPress={handleLogin}>Already have account? Login</Text>
             </View>
         </View>
     );
