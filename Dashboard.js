@@ -11,28 +11,52 @@ const Dashboard = () => {
         setAverageDaily(budget / 30);
     }, [budget])
 
+    const budgetData = {
+        '2023-01-01': { budget: 100 },
+        '2023-01-02': { budget: 80 },
+        '2023-01-03': { budget: 60 },
+        '2023-01-04': { budget: 40 },
+        '2023-01-05': { budget: 20 },
+        '2023-01-06': { budget: 0 },
+        '2023-01-07': { budget: 50 },
+        '2023-01-08': { budget: 60 },
+        '2023-01-09': { budget: 70 },
+        '2023-01-10': { budget: 80 },
+        '2023-01-11': { budget: 90 },
+        '2023-01-12': { budget: 100 },
+        '2023-01-13': { budget: 110 },
+        '2023-01-14': { budget: 120 },
+    }
+
     return (
-        <View style={styles.container}>
+        <View >
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Monthly Budget</Text>
-                <Image
-                    // source={require('path/to/budget-icon.png')}
-                    style={styles.icon}
-                />
+                <Text style={styles.budget}>{budget}</Text>
+
             </View>
-            <Text style={styles.budget}>{budget}</Text>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Average Daily Spend</Text>
-                <Image
-                    // source={require('path/to/money-icon.png')}
-                    style={styles.icon}
-                />
+                <Text style={styles.average}>{averageDaily}</Text>
             </View>
-            <Text style={styles.average}>{averageDaily}</Text>
+
             <Calendar
                 style={styles.calendar}
                 selectedDate={selectedDate}
                 onConfirm={date => setSelectedDate(date)}
+                onDayPress={day => {
+                    const budget = budgetData[day.dateString] && budgetData[day.dateString].budget;
+                    if (budget >= 100) {
+                        day.customStyles.text.color = 'red';
+                    } else if (budget >= 50) {
+                        day.customStyles.text.color = 'yellow';
+                    } else if (budget >= 1) {
+                        day.customStyles.text.color = '#006400';
+                    } else {
+                        day.customStyles.text.color = 'lightgreen';
+                    }
+                }}
+                markedDates={budgetData}
             />
         </View>
     );
@@ -48,12 +72,14 @@ const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
+        alignSelf: 'center',
+        marginBottom: 30
     },
     header: {
         fontSize: 20,
         marginRight: 10,
-        color: '#333'
+        color: '#333',
+        alignSelf: 'center'
     },
     icon: {
         width: 25,
@@ -62,17 +88,18 @@ const styles = StyleSheet.create({
     budget: {
         fontSize: 18,
         color: 'green',
-        marginBottom: 10,
+        alignSelf: 'center'
     },
     average: {
         fontSize: 18,
         color: 'red',
-        marginBottom: 10,
+        alignSelf: 'center'
     },
     calendar: {
-        flex: 1,
         width: '100%',
-        marginTop: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        // alignSelf: 'start'
     }
 });
 

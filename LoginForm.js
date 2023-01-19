@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from './firebase';
+import { setUseCleartextTraffic } from 'expo-network';
+import { signInWithEmailAndPassword, connectAuthEmulator, getAuth } from "firebase/auth";
+
 
 
 function LoginForm() {
+    const auth = getAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
-
     async function handleLogin() {
-        await signInWithEmailAndPassword(auth, email, password)
+        signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 navigation.navigate('Dashboard');
             })
             .catch((error) => {
-                const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log(errorMessage, " eeeeeeeee")
             });

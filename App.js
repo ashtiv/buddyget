@@ -21,6 +21,11 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{ title: 'Dashboard' }}
+        />
+        <Stack.Screen
           name="Login"
           component={LoginForm}
           options={{ title: 'Login' }}
@@ -30,11 +35,7 @@ function App() {
           component={SignupForm}
           options={{ title: 'Sign Up' }}
         />
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          options={{ title: 'Dashboard' }}
-        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

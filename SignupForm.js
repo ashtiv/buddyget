@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, connectAuthEmulator } from "firebase/auth";
 import { auth } from './firebase';
 
 function SignupForm() {
@@ -11,7 +11,8 @@ function SignupForm() {
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
-    function handleSignup() {
+
+    async function handleSignup(e) {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
                 navigation.navigate('Dashboard');
@@ -20,6 +21,7 @@ function SignupForm() {
                 const errorCode = error.code;
                 const errorMessage = error.message;
             });
+
     }
 
     function handleLogin() {
