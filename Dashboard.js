@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import Calendar from 'react-native-calendar';
+import { View, Text, Image, StyleSheet, TextInput, Button } from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import Modal from 'react-native-modal';
 
 const Dashboard = () => {
     const [budget, setBudget] = useState(3000);
     const [averageDaily, setAverageDaily] = useState(100);
     const [selectedDate, setSelectedDate] = useState(new Date());
-
-    useEffect(() => {
-        setAverageDaily(budget / 30);
-    }, [budget])
-
-    const budgetData = {
+    const [budgetData, setBudgetData] = useState({
         '2023-01-01': { budget: 100 },
         '2023-01-02': { budget: 80 },
         '2023-01-03': { budget: 60 },
         '2023-01-04': { budget: 40 },
-        '2023-01-05': { budget: 20 },
+        '2023-01-04': { budget: 70 },
         '2023-01-06': { budget: 0 },
         '2023-01-07': { budget: 50 },
         '2023-01-08': { budget: 60 },
@@ -26,8 +22,75 @@ const Dashboard = () => {
         '2023-01-12': { budget: 100 },
         '2023-01-13': { budget: 110 },
         '2023-01-14': { budget: 120 },
+    });
+    const [selectedBudget, setSelectedBudget] = useState(0);
+    const [formVisible, setFormVisible] = useState(false);
+
+    useEffect(() => {
+        setAverageDaily(budget / 30);
+    }, [budget])
+
+    function budgetColor(money) {
+        if (money <= 0) {
+            return 'white';
+        }
+        if (money > 0 && money < 50) {
+            return 'green';
+        }
+        if (money >= 50 && money < 100) {
+            return 'orange';
+        }
+        return 'red';
     }
 
+    useEffect(() => {
+        let budgetData2 = {}
+        for (let key in budgetData) {
+            budgetData2[key] = {
+                budget: budgetData[key].budget,
+                customStyles: {
+                    container: {
+                        backgroundColor: 'white'
+                    }
+                }
+            }
+            budgetData2[key].customStyles.container.backgroundColor = budgetColor(budgetData[key].budget);
+        }
+        setBudgetData(budgetData2);
+    }, []);
+
+    function handleDatePress(day) {
+        const selectedDate = day.dateString;
+        setSelectedDate(selectedDate);
+        const selectedBudgetValue = budgetData[selectedDate]?.budget || 0;
+        setSelectedBudget(selectedBudgetValue);
+        setFormVisible(true);
+    }
+
+    function handleBudgetChange(newBudget) {
+        setSelectedBudget(newBudget);
+    }
+    function handleFormSubmit() {
+        let budgetData2 = budgetData;
+        if (budgetData2[selectedDate] == undefined) {
+            let obj = {
+                budget: parseFloat(selectedBudget),
+                customStyles: {
+                    container: {
+                        backgroundColor: budgetColor(parseFloat(selectedBudget))
+                    }
+                }
+            }
+            budgetData2[selectedDate] = obj;
+        }
+        else {
+            budgetData2[selectedDate].budget = parseFloat(selectedBudget);
+            budgetData2[selectedDate].customStyles.container.backgroundColor = budgetColor(budgetData2[selectedDate].budget);
+        }
+
+        setBudgetData(budgetData2);
+        setFormVisible(false);
+    }
     return (
         <View >
             <View style={styles.headerContainer}>
@@ -41,23 +104,23 @@ const Dashboard = () => {
             </View>
 
             <Calendar
-                style={styles.calendar}
-                selectedDate={selectedDate}
-                onConfirm={date => setSelectedDate(date)}
-                onDayPress={day => {
-                    const budget = budgetData[day.dateString] && budgetData[day.dateString].budget;
-                    if (budget >= 100) {
-                        day.customStyles.text.color = 'red';
-                    } else if (budget >= 50) {
-                        day.customStyles.text.color = 'yellow';
-                    } else if (budget >= 1) {
-                        day.customStyles.text.color = '#006400';
-                    } else {
-                        day.customStyles.text.color = 'lightgreen';
-                    }
-                }}
+
+                style={styles.Calendar}
+                markingType={'custom'}
                 markedDates={budgetData}
+                onDayPress={(day) => handleDatePress(day)}
             />
+            <Modal isVisible={formVisible} style={styles.modal}>
+                <View style={styles.formContainer}>
+                    <Text style={styles.formHeader}>Enter budget for {selectedDate}</Text>
+                    <TextInput
+                        style={styles.formInput}
+                        value={selectedBudget}
+                        onChangeText={handleBudgetChange}
+                    />
+                    <Button title="Submit" onPress={handleFormSubmit} />
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -95,12 +158,44 @@ const styles = StyleSheet.create({
         color: 'red',
         alignSelf: 'center'
     },
-    calendar: {
-        width: '100%',
+    formContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        // alignSelf: 'start'
-    }
+    },
+    input: {
+        width: 200,
+        height: 40,
+        borderWidth: 1,
+        borderColor: 'black',
+        marginBottom: 10,
+        padding: 10,
+    },
+    Calendar: {
+        backgroundColor: '#F8F8FF'
+    },
+    formHeader: {
+        fontSize: 18,
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    formInput: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 5,
+    },
+    modalStyle: {
+        backgroundColor: 'white',
+    },
+    modal: {
+        width: '80%',
+        height: '50%',
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white'
+    },
 });
 
-export default Dashboard;
+export default Dashboard;    
