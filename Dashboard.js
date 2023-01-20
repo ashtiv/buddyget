@@ -61,10 +61,17 @@ const Dashboard = () => {
 
     function handleDatePress(day) {
         const selectedDate = day.dateString;
-        setSelectedDate(selectedDate);
-        const selectedBudgetValue = budgetData[selectedDate]?.budget || 0;
-        setSelectedBudget(selectedBudgetValue);
-        setFormVisible(true);
+        const today = new Date();
+        const todayString = today.toISOString().substring(0, 10)
+        if (todayString < selectedDate) {
+            alert('This date yet to come')
+        }
+        else {
+            setSelectedDate(selectedDate);
+            const selectedBudgetValue = budgetData[selectedDate]?.budget || 0;
+            setSelectedBudget(selectedBudgetValue);
+            setFormVisible(true);
+        }
     }
 
     function handleBudgetChange(newBudget) {
