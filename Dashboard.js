@@ -7,6 +7,7 @@ const Dashboard = () => {
     const [budget, setBudget] = useState(3000);
     const [averageDaily, setAverageDaily] = useState(100);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [currMonth, setCurrMonth] = useState(0);
     const [budgetData, setBudgetData] = useState({
         '2023-01-01': { budget: 100 },
         '2023-01-02': { budget: 80 },
@@ -25,10 +26,19 @@ const Dashboard = () => {
     });
     const [selectedBudget, setSelectedBudget] = useState(0);
     const [formVisible, setFormVisible] = useState(false);
-
+    const setNumbers = () => {
+        let dateArr = Object.keys(budgetData);
+        let monthArr = dateArr.filter(date => new Date(date).getMonth() + 1 === currMonth);
+        let budgetSum = 0;
+        for (let i in monthArr) {
+            budgetSum += budgetData[monthArr[i]].budget;
+        }
+        setBudget(budgetSum);
+        setAverageDaily(budgetSum / 30);
+    }
     useEffect(() => {
-        setAverageDaily(budget / 30);
-    }, [budget])
+        setNumbers()
+    }, [currMonth])
 
     function budgetColor(money) {
         if (money <= 0) {
@@ -42,7 +52,9 @@ const Dashboard = () => {
         }
         return 'red';
     }
-
+    function handleMonthChange(month) {
+        setCurrMonth(month.month);
+    }
     useEffect(() => {
         let budgetData2 = {}
         for (let key in budgetData) {
@@ -57,6 +69,8 @@ const Dashboard = () => {
             budgetData2[key].customStyles.container.backgroundColor = budgetColor(budgetData[key].budget);
         }
         setBudgetData(budgetData2);
+        let today = new Date();
+        setCurrMonth(today.getMonth() + 1)
     }, []);
 
     function handleDatePress(day) {
@@ -94,28 +108,28 @@ const Dashboard = () => {
             budgetData2[selectedDate].budget = parseFloat(selectedBudget);
             budgetData2[selectedDate].customStyles.container.backgroundColor = budgetColor(budgetData2[selectedDate].budget);
         }
-
         setBudgetData(budgetData2);
+        setNumbers();
         setFormVisible(false);
     }
     return (
         <View >
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Monthly Budget</Text>
-                <Text style={styles.budget}>{budget}</Text>
+                <Text style={styles.budget}>{parseFloat(budget).toFixed(2)}</Text>
 
             </View>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Average Daily Spend</Text>
-                <Text style={styles.average}>{averageDaily}</Text>
+                <Text style={styles.average}>{parseFloat(averageDaily).toFixed(2)}</Text>
             </View>
 
             <Calendar
-
                 style={styles.Calendar}
                 markingType={'custom'}
                 markedDates={budgetData}
                 onDayPress={(day) => handleDatePress(day)}
+                onMonthChange={(month) => { handleMonthChange(month) }}
                 renderArrow={(direction) => {
                     if (direction == 'left') {
                         return (<Text style={styles.arrows}>{'<'}</Text>)

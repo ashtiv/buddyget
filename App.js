@@ -19,6 +19,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+
         <Stack.Screen
           name="Login"
           component={LoginForm}
@@ -29,7 +30,6 @@ function App() {
           component={Dashboard}
           options={{ title: 'Dashboard' }}
         />
-
       </Stack.Navigator>
     </NavigationContainer>
   );
