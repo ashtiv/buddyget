@@ -8,6 +8,7 @@ const Dashboard = () => {
     const [averageDaily, setAverageDaily] = useState(100);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currMonth, setCurrMonth] = useState(0);
+    const [currYear, setCurrYear] = useState(0);
     const [budgetData, setBudgetData] = useState({
         '2023-01-01': { budget: 100 },
         '2023-01-02': { budget: 80 },
@@ -28,17 +29,20 @@ const Dashboard = () => {
     const [formVisible, setFormVisible] = useState(false);
     const setNumbers = () => {
         let dateArr = Object.keys(budgetData);
-        let monthArr = dateArr.filter(date => new Date(date).getMonth() + 1 === currMonth);
+        let monthArr = dateArr.filter(date => {
+            let currDate = new Date(date);
+            return (currDate.getMonth() + 1 === currMonth) && (currDate.getFullYear() === currYear);
+        });
         let budgetSum = 0;
         for (let i in monthArr) {
             budgetSum += budgetData[monthArr[i]].budget;
         }
         setBudget(budgetSum);
-        setAverageDaily(budgetSum / 30);
+        setAverageDaily(makeaverageDaily(budgetSum, currMonth, currYear));
     }
     useEffect(() => {
         setNumbers()
-    }, [currMonth])
+    }, [currMonth, currYear])
 
     function budgetColor(money) {
         if (money <= 0) {
@@ -52,8 +56,9 @@ const Dashboard = () => {
         }
         return 'red';
     }
-    function handleMonthChange(month) {
-        setCurrMonth(month.month);
+    function handleMonthChange(day) {
+        setCurrYear(day.year)
+        setCurrMonth(day.month);
     }
     useEffect(() => {
         let budgetData2 = {}
@@ -70,6 +75,7 @@ const Dashboard = () => {
         }
         setBudgetData(budgetData2);
         let today = new Date();
+        setCurrYear(today.getFullYear())
         setCurrMonth(today.getMonth() + 1)
     }, []);
 
@@ -90,6 +96,14 @@ const Dashboard = () => {
 
     function handleBudgetChange(newBudget) {
         setSelectedBudget(newBudget);
+    }
+    function makeaverageDaily(total, month, year) {
+        const today = new Date();
+        if (month == today.getMonth() + 1 && year == today.getFullYear()) {
+            return total / today.getDate();
+        } else {
+            return total / new Date(year, month, 0).getDate();
+        }
     }
     function handleFormSubmit() {
         let budgetData2 = budgetData;

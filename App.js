@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginForm from './LoginForm';
 import Dashboard from './Dashboard';
+import { LogBox } from 'react-native';
+
 
 function HomeScreen() {
   return (
@@ -16,6 +18,8 @@ function HomeScreen() {
 const Stack = createNativeStackNavigator();
 
 function App() {
+  LogBox.ignoreLogs(['Warning: ...']);
+  LogBox.ignoreAllLogs();
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -30,6 +34,7 @@ function App() {
           component={Dashboard}
           options={{ title: 'Dashboard' }}
         />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
