@@ -109,6 +109,13 @@ const Dashboard = () => {
                 markingType={'custom'}
                 markedDates={budgetData}
                 onDayPress={(day) => handleDatePress(day)}
+                renderArrow={(direction) => {
+                    if (direction == 'left') {
+                        return (<Text style={styles.arrows}>{'<'}</Text>)
+                    } else {
+                        return (<Text style={styles.arrows}>{'>'}</Text>)
+                    }
+                }}
             />
             <Modal isVisible={formVisible} style={styles.modal}>
                 <View style={styles.formContainer}>
@@ -196,6 +203,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white'
     },
+    arrows: {
+        color: 'blue',
+        fontWeight: '1000px',
+        fontSize: 20
+    }
 });
 
 export default Dashboard;    
