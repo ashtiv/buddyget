@@ -4,18 +4,21 @@ import { useNavigation } from '@react-navigation/native';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import GoogleButton from 'react-google-button';
 import { auth } from './firebase';
-
+import { useSelector, useDispatch } from 'react-redux';
 
 
 function LoginForm() {
     const navigation = useNavigation();
     const [errorMessage, setErrorMessage] = useState('');
     const provider = new GoogleAuthProvider();
+    const dispatch = useDispatch();
+    const loginUser = useSelector(state => state.loginUser);
 
     async function handleLogin() {
         signInWithPopup(auth, provider)
             .then((result) => {
                 const user = result.user;
+                dispatch({ type: 'LOGIN', user });
                 navigation.navigate('Dashboard');
             }).catch((error) => {
                 const errorCode = error.code;

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, Button } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Modal from 'react-native-modal';
+import { useSelector, useDispatch } from 'react-redux';
+
 
 const Dashboard = () => {
     const [budget, setBudget] = useState(3000);
@@ -9,6 +11,7 @@ const Dashboard = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currMonth, setCurrMonth] = useState(0);
     const [currYear, setCurrYear] = useState(0);
+    const loginUser = useSelector(state => state.loginUser);
     const [budgetData, setBudgetData] = useState({
         '2023-01-01': { budget: 100 },
         '2023-01-02': { budget: 80 },
@@ -77,6 +80,7 @@ const Dashboard = () => {
         let today = new Date();
         setCurrYear(today.getFullYear())
         setCurrMonth(today.getMonth() + 1)
+        console.log(loginUser.displayName, " lllllllllllll")
     }, []);
 
     function handleDatePress(day) {

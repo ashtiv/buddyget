@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginForm from './LoginForm';
 import Dashboard from './Dashboard';
 import { LogBox } from 'react-native';
+import { ReduxProvider } from './store';
 
 
 function HomeScreen() {
@@ -21,22 +22,24 @@ function App() {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreAllLogs();
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
+    <ReduxProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
 
-        <Stack.Screen
-          name="Login"
-          component={LoginForm}
-          options={{ title: 'Login' }}
-        />
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          options={{ title: 'Dashboard' }}
-        />
+          <Stack.Screen
+            name="Login"
+            component={LoginForm}
+            options={{ title: 'Login' }}
+          />
+          <Stack.Screen
+            name="Dashboard"
+            component={Dashboard}
+            options={{ title: 'Dashboard' }}
+          />
 
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ReduxProvider>
   );
 }
 
