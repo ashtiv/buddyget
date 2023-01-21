@@ -4,7 +4,8 @@ import { Calendar } from 'react-native-calendars';
 import Modal from 'react-native-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './styles/Dashboard-styles'
-
+import { db } from './firebase';
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 const Dashboard = () => {
     const [budget, setBudget] = useState(3000);
@@ -13,40 +14,30 @@ const Dashboard = () => {
     const [currMonth, setCurrMonth] = useState(0);
     const [currYear, setCurrYear] = useState(0);
     const loginUser = useSelector(state => state.loginUser);
-    const [budgetData, setBudgetData] = useState({
-        '2023-01-01': { budget: 100 },
-        '2023-01-02': { budget: 80 },
-        '2023-01-03': { budget: 60 },
-        '2023-01-04': { budget: 40 },
-        '2023-01-04': { budget: 70 },
-        '2023-01-06': { budget: 0 },
-        '2023-01-07': { budget: 50 },
-        '2023-01-08': { budget: 60 },
-        '2023-01-09': { budget: 70 },
-        '2023-01-10': { budget: 80 },
-        '2023-01-11': { budget: 90 },
-        '2023-01-12': { budget: 100 },
-        '2023-01-13': { budget: 110 },
-        '2023-01-14': { budget: 120 },
-    });
+    const [budgetData, setBudgetData] = useState({});
     const [selectedBudget, setSelectedBudget] = useState(0);
     const [formVisible, setFormVisible] = useState(false);
-    const setNumbers = () => {
-        let dateArr = Object.keys(budgetData);
+    const setNumbers = (budd, curm, cury) => {
+        let dateArr = Object.keys(budd);
         let monthArr = dateArr.filter(date => {
             let currDate = new Date(date);
-            return (currDate.getMonth() + 1 === currMonth) && (currDate.getFullYear() === currYear);
+            return (currDate.getMonth() + 1 == curm) && (currDate.getFullYear() == cury);
         });
         let budgetSum = 0;
         for (let i in monthArr) {
-            budgetSum += budgetData[monthArr[i]].budget;
+            budgetSum += parseFloat(budd[monthArr[i]].budget);
         }
-        setBudget(budgetSum);
-        setAverageDaily(makeaverageDaily(budgetSum, currMonth, currYear));
+        setBudget({ budget: budgetSum, avg: makeaverageDaily(budgetSum, curm, cury) });
     }
+    useEffect(async () => {
+        getData();
+        let today = new Date()
+        setCurrYear(today.getFullYear())
+        setCurrMonth(today.getMonth() + 1)
+    }, []);
     useEffect(() => {
-        setNumbers()
-    }, [currMonth, currYear])
+        setNumbers(budgetData, currMonth, currYear)
+    }, [currMonth, currYear, budgetData])
 
     function budgetColor(money) {
         if (money <= 0) {
@@ -64,25 +55,21 @@ const Dashboard = () => {
         setCurrYear(day.year)
         setCurrMonth(day.month);
     }
-    useEffect(() => {
+    async function setColors(budd) {
         let budgetData2 = {}
-        for (let key in budgetData) {
+        for (let key in budd) {
             budgetData2[key] = {
-                budget: budgetData[key].budget,
+                budget: budd[key].budget,
                 customStyles: {
                     container: {
                         backgroundColor: 'white'
                     }
                 }
             }
-            budgetData2[key].customStyles.container.backgroundColor = budgetColor(budgetData[key].budget);
+            budgetData2[key].customStyles.container.backgroundColor = budgetColor(budd[key].budget);
         }
         setBudgetData(budgetData2);
-        let today = new Date();
-        setCurrYear(today.getFullYear())
-        setCurrMonth(today.getMonth() + 1)
-        console.log(loginUser.displayName, " lllllllllllll")
-    }, []);
+    }
 
     function handleDatePress(day) {
         const selectedDate = day.dateString;
@@ -110,37 +97,36 @@ const Dashboard = () => {
             return total / new Date(year, month, 0).getDate();
         }
     }
-    function handleFormSubmit() {
-        let budgetData2 = budgetData;
-        if (budgetData2[selectedDate] == undefined) {
-            let obj = {
-                budget: parseFloat(selectedBudget),
-                customStyles: {
-                    container: {
-                        backgroundColor: budgetColor(parseFloat(selectedBudget))
-                    }
-                }
+    async function getData() {
+        const userId = loginUser.uid;
+        const docRef = doc(db, "budgets", userId);
+        getDoc(docRef).then(async docSnap => {
+            if (docSnap.exists()) {
+                await setColors(docSnap.data());
+                setNumbers(docSnap.data(), currMonth, currYear);
+                setFormVisible(false);
+            } else {
             }
-            budgetData2[selectedDate] = obj;
-        }
-        else {
-            budgetData2[selectedDate].budget = parseFloat(selectedBudget);
-            budgetData2[selectedDate].customStyles.container.backgroundColor = budgetColor(budgetData2[selectedDate].budget);
-        }
-        setBudgetData(budgetData2);
-        setNumbers();
-        setFormVisible(false);
+        })
+    }
+    async function handleFormSubmit() {
+        const userId = loginUser.uid;
+        const parentRef = doc(db, "budgets", userId);
+        await setDoc(parentRef, {
+            [selectedDate]: { budget: selectedBudget }
+        }, { merge: true });
+        await getData();
     }
     return (
         <View >
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Monthly Budget</Text>
-                <Text style={styles.budget}>{parseFloat(budget).toFixed(2)}</Text>
+                <Text style={styles.budget}>{parseFloat(budget.budget).toFixed(2)}</Text>
 
             </View>
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Average Daily Spend</Text>
-                <Text style={styles.average}>{parseFloat(averageDaily).toFixed(2)}</Text>
+                <Text style={styles.average}>{parseFloat(budget.avg).toFixed(2)}</Text>
             </View>
 
             <Calendar
