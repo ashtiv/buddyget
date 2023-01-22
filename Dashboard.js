@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import styles from './styles/Dashboard-styles'
 import { db } from './firebase';
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { budgetColor, makeaverageDaily } from "./functions"
+import DashboardHeader from './DashboardHeader';
 
 const Dashboard = () => {
     const [budget, setBudget] = useState(3000);
@@ -39,18 +41,6 @@ const Dashboard = () => {
         setNumbers(budgetData, currMonth, currYear)
     }, [currMonth, currYear, budgetData])
 
-    function budgetColor(money) {
-        if (money <= 0) {
-            return 'white';
-        }
-        if (money > 0 && money < 50) {
-            return 'green';
-        }
-        if (money >= 50 && money < 100) {
-            return 'orange';
-        }
-        return 'red';
-    }
     function handleMonthChange(day) {
         setCurrYear(day.year)
         setCurrMonth(day.month);
@@ -89,14 +79,7 @@ const Dashboard = () => {
     function handleBudgetChange(newBudget) {
         setSelectedBudget(newBudget);
     }
-    function makeaverageDaily(total, month, year) {
-        const today = new Date();
-        if (month == today.getMonth() + 1 && year == today.getFullYear()) {
-            return total / today.getDate();
-        } else {
-            return total / new Date(year, month, 0).getDate();
-        }
-    }
+
     async function getData() {
         const userId = loginUser.uid;
         const docRef = doc(db, "budgets", userId);
@@ -119,16 +102,7 @@ const Dashboard = () => {
     }
     return (
         <View >
-            <View style={styles.headerContainer}>
-                <Text style={styles.header}>Monthly Budget</Text>
-                <Text style={styles.budget}>{parseFloat(budget.budget).toFixed(2)}</Text>
-
-            </View>
-            <View style={styles.headerContainer}>
-                <Text style={styles.header}>Average Daily Spend</Text>
-                <Text style={styles.average}>{parseFloat(budget.avg).toFixed(2)}</Text>
-            </View>
-
+            <DashboardHeader budget={budget} />
             <Calendar
                 style={styles.Calendar}
                 markingType={'custom'}
