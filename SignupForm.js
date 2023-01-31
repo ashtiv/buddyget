@@ -1,50 +1,51 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import GoogleButton from 'react-google-button';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from './firebase';
 import { useSelector, useDispatch } from 'react-redux';
 
 
-function LoginForm() {
+function SignupForm() {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigation = useNavigation();
-    const [errorMessage, setErrorMessage] = useState('');
-    const provider = new GoogleAuthProvider();
     const dispatch = useDispatch();
+    const navigation = useNavigation();
     const loginUser = useSelector(state => state.loginUser);
 
-    async function handleLogin() {
-        signInWithEmailAndPassword(auth, email, password)
+
+    function handleSignup() {
+        createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
+                console.log(userCredential, "uuuuuuuuu")
                 const user = userCredential.user;
                 dispatch({ type: 'LOGIN', user })
                 navigation.navigate('Dashboard');
+
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                console.log(errorMessage, " eeeeeeee")
             });
     }
 
-    function handleSignup() {
-        navigation.navigate('Signup');
+    function handleLogin() {
+        navigation.navigate('Login');
     }
-
-    const styles = StyleSheet.create({
-        link: {
-            color: 'blue',
-            textDecorationLine: 'underline',
-            fontSize: 20,
-        },
-    });
 
     return (
         <View style={{ padding: 24 }}>
+            <Input
+                value={name}
+                onChangeText={setName}
+                placeholder="Full name"
+                label="Full name"
+                labelStyle={{ fontSize: 18, marginBottom: 8 }}
+                inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
+            />
             <Input
                 value={email}
                 onChangeText={setEmail}
@@ -68,13 +69,13 @@ function LoginForm() {
                 inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
             />
             <View style={{ marginBottom: 16 }}>
-                <Button title="Log in" onPress={handleLogin} />
+                <Button title="Create account" onPress={handleSignup} />
             </View>
             <View style={{ marginBottom: 16 }}>
-                <Button title="Create account" onPress={handleSignup} />
+                <Button title="Log in" onPress={handleLogin} />
             </View>
         </View>
     );
 }
 
-export default LoginForm;
+export default SignupForm;

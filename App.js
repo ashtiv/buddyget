@@ -6,6 +6,7 @@ import LoginForm from './LoginForm';
 import Dashboard from './Dashboard';
 import { LogBox } from 'react-native';
 import { ReduxProvider } from './store';
+import SignupForm from './SignUpForm';
 
 
 function HomeScreen() {
@@ -30,6 +31,11 @@ function App() {
             name="Login"
             component={LoginForm}
             options={{ title: 'Login' }}
+          />
+          <Stack.Screen
+            name="Signup"
+            component={SignupForm}
+            options={{ title: 'Sign Up' }}
           />
           <Stack.Screen
             name="Dashboard"
