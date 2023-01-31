@@ -19,7 +19,7 @@ const Dashboard = () => {
     const [budgetData, setBudgetData] = useState({});
     const [selectedBudget, setSelectedBudget] = useState(0);
     const [formVisible, setFormVisible] = useState(false);
-    const setNumbers = (budd, curm, cury) => {
+    async function setNumbers(budd, curm, cury) {
         let dateArr = Object.keys(budd);
         let monthArr = dateArr.filter(date => {
             let currDate = new Date(date);
@@ -31,7 +31,7 @@ const Dashboard = () => {
         }
         setBudget({ budget: budgetSum, avg: makeaverageDaily(budgetSum, curm, cury) });
     }
-    useEffect(async () => {
+    useEffect(() => {
         getData();
         let today = new Date()
         setCurrYear(today.getFullYear())
@@ -86,7 +86,7 @@ const Dashboard = () => {
         getDoc(docRef).then(async docSnap => {
             if (docSnap.exists()) {
                 await setColors(docSnap.data());
-                setNumbers(docSnap.data(), currMonth, currYear);
+                await setNumbers(docSnap.data(), currMonth, currYear);
                 setFormVisible(false);
             } else {
             }
