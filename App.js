@@ -6,7 +6,7 @@ import LoginForm from './LoginForm';
 import Dashboard from './Dashboard';
 import { LogBox } from 'react-native';
 import { ReduxProvider } from './store';
-import SignupForm from './SignUpForm';
+import SignupForm from './SignupForm';
 
 
 function HomeScreen() {
