@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import GoogleButton from 'react-google-button';
 import { auth } from './firebase';
 import { useSelector, useDispatch } from 'react-redux';
 
 
 function LoginForm() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const navigation = useNavigation();
     const [errorMessage, setErrorMessage] = useState('');
     const provider = new GoogleAuthProvider();
@@ -15,15 +19,15 @@ function LoginForm() {
     const loginUser = useSelector(state => state.loginUser);
 
     async function handleLogin() {
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                const user = result.user;
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
                 dispatch({ type: 'LOGIN', user });
                 navigation.navigate('Dashboard');
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 const errorCode = error.code;
-                const err = error.message;
-                setErrorMessage(err)
+                const errorMessage = error.message;
             });
     }
 
@@ -41,11 +45,34 @@ function LoginForm() {
 
     return (
         <View style={{ padding: 24 }}>
-            <GoogleButton
-                onClick={handleLogin}
-                style={{ marginBottom: 20 }}
+            <Input
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCompleteType="email"
+                label="Email"
+                labelStyle={{ fontSize: 18, marginBottom: 8 }}
+                inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
             />
-            {errorMessage && <Text>{errorMessage}</Text>}
+            <Input
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+                secureTextEntry={true}
+                autoCapitalize="none"
+                autoCompleteType="password"
+                label="Password"
+                labelStyle={{ fontSize: 18, marginBottom: 8 }}
+                inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
+            />
+            <View style={{ marginBottom: 16 }}>
+                <Button title="Log in" onPress={handleLogin} />
+            </View>
+            <View style={{ marginBottom: 16 }}>
+                <Button title="Create account" onPress={handleSignup} />
+            </View>
         </View>
     );
 }
