@@ -129,17 +129,12 @@ const Dashboard = () => {
     const confirmModal = () => (
         <Modal isVisible={showModal} style={styles.modal}>
             <View style={styles.modalContainer}>
-                <Text>Are you sure?</Text>
-                <View style={styles.modalButtonContainer}>
-                    <Button
-                        title="Cancel"
-                        onPress={() => setShowModal(false)}
-                    />
-                    <Button
-                        title="Confirm"
-                        onPress={resetThisMonth}
-                    />
+                <Text style={{ marginBottom: 20 }}>Are you sure?</Text>
+                <View style={{ flexDirection: 'row' }}>
+                    <View style={{ marginRight: 20 }}><Button title="Cancel" onPress={() => setShowModal(false)} /></View>
+                    <View style={{ marginLeft: 20 }}><Button title="Confirm" onPress={resetThisMonth} /></View>
                 </View>
+
             </View>
         </Modal>
     )
