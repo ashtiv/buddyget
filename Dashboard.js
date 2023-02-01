@@ -5,12 +5,12 @@ import Modal from 'react-native-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './styles/Dashboard-styles'
 import { db } from './firebase';
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { budgetColor, makeaverageDaily } from "./functions"
 import DashboardHeader from './DashboardHeader';
 
 const Dashboard = () => {
-    const [budget, setBudget] = useState(3000);
+    const [budget, setBudget] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const loginUser = useSelector(state => state.loginUser);
     const [budgetData, setBudgetData] = useState({});
@@ -27,7 +27,7 @@ const Dashboard = () => {
         for (let i in monthArr) {
             budgetSum += parseFloat(budd[monthArr[i]].budget);
         }
-        setBudget({ budget: budgetSum, avg: makeaverageDaily(budgetSum, curm, cury) });
+        setBudget({ budget: budgetSum, avg: makeaverageDaily(budgetSum, curm, cury), month: curm, year: cury });
     }
     useEffect(() => {
         let today = new Date();
@@ -84,6 +84,24 @@ const Dashboard = () => {
             }
         })
     }
+    async function deleteData(currm, curry) {
+        const userId = loginUser.uid;
+        const docRef = doc(db, "budgets", userId);
+        getDoc(docRef).then(async docSnap => {
+            if (docSnap.exists) {
+                let data = docSnap.data();
+                Object.keys(data).forEach(key => {
+                    let date = new Date(key);
+                    if (date.getMonth() + 1 == currm && date.getFullYear() == curry) {
+                        delete data[key];
+                    }
+                });
+                setDoc(docRef, data).then(() => {
+                    getData(currm, curry);
+                })
+            }
+        });
+    }
     async function handleFormSubmit() {
         const dd = new Date(selectedDate);
         const currm = dd.getMonth() + 1;
@@ -100,6 +118,11 @@ const Dashboard = () => {
         const selectedBudgetValue = budgetData[day.dateString]?.budget || 0;
         setSelectedBudget(selectedBudgetValue);
         setModalVisible(true);
+    }
+    async function resetThisMonth() {
+        const curm = budget.month;
+        const cury = budget.year;
+        await deleteData(curm, cury);
     }
     return (
         <View >
@@ -136,6 +159,7 @@ const Dashboard = () => {
                     <Button title="Submit" onPress={handleFormSubmit} />
                 </View>
             </Modal>
+            <Button title="Reset this month" onPress={resetThisMonth} />
         </View>
     );
 };
