@@ -16,6 +16,7 @@ const Dashboard = () => {
     const [budgetData, setBudgetData] = useState({});
     const [selectedBudget, setSelectedBudget] = useState(0);
     const [formVisible, setFormVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
     async function setNumbers(budd, curm, cury) {
         let dateArr = Object.keys(budd);
         let monthArr = dateArr.filter(date => {
@@ -94,6 +95,12 @@ const Dashboard = () => {
         }, { merge: true });
         await getData(currm, curry);
     }
+    function handleDayLongPress(day) {
+        setSelectedDate(day.dateString);
+        const selectedBudgetValue = budgetData[day.dateString]?.budget || 0;
+        setSelectedBudget(selectedBudgetValue);
+        setModalVisible(true);
+    }
     return (
         <View >
             <DashboardHeader budget={budget} />
@@ -102,6 +109,7 @@ const Dashboard = () => {
                 markingType={'custom'}
                 markedDates={budgetData}
                 onDayPress={(day) => handleDatePress(day)}
+                onDayLongPress={day => handleDayLongPress(day)}
                 onMonthChange={(month) => { handleMonthChange(month) }}
                 renderArrow={(direction) => {
                     if (direction == 'left') {
@@ -111,6 +119,12 @@ const Dashboard = () => {
                     }
                 }}
             />
+            <Modal visible={modalVisible} style={styles.modal}>
+                <View>
+                    <Text style={styles.budgetView}>budget for {selectedDate} : {selectedBudget}</Text>
+                    <Button title="OK" onPress={() => { setModalVisible(false) }} />
+                </View>
+            </Modal>
             <Modal isVisible={formVisible} style={styles.modal}>
                 <View style={styles.formContainer}>
                     <Text style={styles.formHeader}>Enter budget for {selectedDate}</Text>
