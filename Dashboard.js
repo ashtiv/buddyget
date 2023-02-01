@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [selectedBudget, setSelectedBudget] = useState(0);
     const [formVisible, setFormVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     async function setNumbers(budd, curm, cury) {
         let dateArr = Object.keys(budd);
         let monthArr = dateArr.filter(date => {
@@ -123,9 +124,28 @@ const Dashboard = () => {
         const curm = budget.month;
         const cury = budget.year;
         await deleteData(curm, cury);
+        setShowModal(false)
     }
+    const confirmModal = () => (
+        <Modal isVisible={showModal} style={styles.modal}>
+            <View style={styles.modalContainer}>
+                <Text>Are you sure?</Text>
+                <View style={styles.modalButtonContainer}>
+                    <Button
+                        title="Cancel"
+                        onPress={() => setShowModal(false)}
+                    />
+                    <Button
+                        title="Confirm"
+                        onPress={resetThisMonth}
+                    />
+                </View>
+            </View>
+        </Modal>
+    )
     return (
         <View >
+            {confirmModal()}
             <DashboardHeader budget={budget} />
             <Calendar
                 style={styles.Calendar}
@@ -159,7 +179,10 @@ const Dashboard = () => {
                     <Button title="Submit" onPress={handleFormSubmit} />
                 </View>
             </Modal>
-            <Button title="Reset this month" onPress={resetThisMonth} />
+            <Button
+                title="Reset this month"
+                onPress={() => setShowModal(true)}
+            />
         </View>
     );
 };
