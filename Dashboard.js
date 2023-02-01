@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Modal from 'react-native-modal';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,10 +11,7 @@ import DashboardHeader from './DashboardHeader';
 
 const Dashboard = () => {
     const [budget, setBudget] = useState(3000);
-    const [averageDaily, setAverageDaily] = useState(100);
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [currMonth, setCurrMonth] = useState(0);
-    const [currYear, setCurrYear] = useState(0);
     const loginUser = useSelector(state => state.loginUser);
     const [budgetData, setBudgetData] = useState({});
     const [selectedBudget, setSelectedBudget] = useState(0);
@@ -32,20 +29,14 @@ const Dashboard = () => {
         setBudget({ budget: budgetSum, avg: makeaverageDaily(budgetSum, curm, cury) });
     }
     useEffect(() => {
-        getData();
-        let today = new Date()
-        setCurrYear(today.getFullYear())
-        setCurrMonth(today.getMonth() + 1)
+        let today = new Date();
+        getData(today.getMonth() + 1, today.getFullYear());
     }, []);
-    useEffect(() => {
-        setNumbers(budgetData, currMonth, currYear)
-    }, [currMonth, currYear, budgetData])
 
     function handleMonthChange(day) {
-        setCurrYear(day.year)
-        setCurrMonth(day.month);
+        setNumbers(budgetData, day.month, day.year)
     }
-    async function setColors(budd) {
+    async function setColors(budd, currm, curry) {
         let budgetData2 = {}
         for (let key in budd) {
             budgetData2[key] = {
@@ -59,6 +50,7 @@ const Dashboard = () => {
             budgetData2[key].customStyles.container.backgroundColor = budgetColor(budd[key].budget);
         }
         setBudgetData(budgetData2);
+        setNumbers(budgetData2, currm, curry)
     }
 
     function handleDatePress(day) {
@@ -80,25 +72,27 @@ const Dashboard = () => {
         setSelectedBudget(newBudget);
     }
 
-    async function getData() {
+    async function getData(currm, curry) {
         const userId = loginUser.uid;
         const docRef = doc(db, "budgets", userId);
         getDoc(docRef).then(async docSnap => {
             if (docSnap.exists()) {
-                await setColors(docSnap.data());
-                await setNumbers(docSnap.data(), currMonth, currYear);
+                await setColors(docSnap.data(), currm, curry);
                 setFormVisible(false);
             } else {
             }
         })
     }
     async function handleFormSubmit() {
+        const dd = new Date(selectedDate);
+        const currm = dd.getMonth() + 1;
+        const curry = dd.getFullYear();
         const userId = loginUser.uid;
         const parentRef = doc(db, "budgets", userId);
         await setDoc(parentRef, {
             [selectedDate]: { budget: selectedBudget }
         }, { merge: true });
-        await getData();
+        await getData(currm, curry);
     }
     return (
         <View >
