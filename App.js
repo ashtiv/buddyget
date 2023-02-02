@@ -30,17 +30,17 @@ function App() {
           <Stack.Screen
             name="Login"
             component={LoginForm}
-            options={{ title: 'Login' }}
+            options={{ title: 'Login', headerLeft: null, headerTitleAlign: 'center' }}
           />
           <Stack.Screen
             name="Signup"
             component={SignupForm}
-            options={{ title: 'Sign Up' }}
+            options={{ title: 'Sign Up', headerLeft: null, headerTitleAlign: 'center' }}
           />
           <Stack.Screen
             name="Dashboard"
             component={Dashboard}
-            options={{ title: 'Dashboard' }}
+            options={{ title: 'Dashboard', headerLeft: null, headerTitleAlign: 'center' }}
           />
 
         </Stack.Navigator>

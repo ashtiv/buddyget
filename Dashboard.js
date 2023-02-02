@@ -8,6 +8,10 @@ import { db } from './firebase';
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { budgetColor, makeaverageDaily } from "./functions"
 import DashboardHeader from './DashboardHeader';
+import { auth } from './firebase';
+import { useNavigation } from '@react-navigation/native';
+
+
 
 const Dashboard = () => {
     const [budget, setBudget] = useState({});
@@ -18,6 +22,10 @@ const Dashboard = () => {
     const [formVisible, setFormVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+
+
     async function setNumbers(budd, curm, cury) {
         let dateArr = Object.keys(budd);
         let monthArr = dateArr.filter(date => {
@@ -126,6 +134,15 @@ const Dashboard = () => {
         await deleteData(curm, cury);
         setShowModal(false)
     }
+    async function handleLogout() {
+        try {
+            await auth.signOut();
+            dispatch({ type: 'LOGOUT' });
+            navigation.navigate('Login');
+        } catch (error) {
+            console.error(error);
+        }
+    }
     const confirmModal = () => (
         <Modal isVisible={showModal} style={styles.modal}>
             <View style={styles.modalContainer}>
@@ -174,10 +191,18 @@ const Dashboard = () => {
                     <Button title="Submit" onPress={handleFormSubmit} />
                 </View>
             </Modal>
-            <Button
-                title="Reset this month"
-                onPress={() => setShowModal(true)}
-            />
+            <View style={{ marginBottom: 16 }}>
+                <Button
+                    title="Reset this month"
+                    onPress={() => setShowModal(true)}
+                />
+            </View>
+            <View style={{ marginBottom: 16 }}>
+                <Button
+                    title="Logout"
+                    onPress={handleLogout}
+                />
+            </View>
         </View>
     );
 };
