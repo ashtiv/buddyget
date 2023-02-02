@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import GoogleButton from 'react-google-button';
 import { auth } from './firebase';
 import { useSelector, useDispatch } from 'react-redux';
+import ActivityModal from './ActivityModal';
 
 
 function LoginForm() {
@@ -14,20 +15,25 @@ function LoginForm() {
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const provider = new GoogleAuthProvider();
     const dispatch = useDispatch();
     const loginUser = useSelector(state => state.loginUser);
 
     async function handleLogin() {
+        setLoading(true);
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 dispatch({ type: 'LOGIN', user })
                 navigation.navigate('Dashboard');
+                setLoading(false);
             })
             .catch((error) => {
                 const errorCode = error.code;
-                const errorMessage = error.message;
+                const errorMess = error.message;
+                setErrorMessage(errorMess);
+                setLoading(false);
             });
     }
 
@@ -45,6 +51,7 @@ function LoginForm() {
 
     return (
         <View style={{ padding: 24 }}>
+            <ActivityModal loading={loading} />
             <Input
                 value={email}
                 onChangeText={setEmail}
@@ -67,6 +74,9 @@ function LoginForm() {
                 labelStyle={{ fontSize: 18, marginBottom: 8 }}
                 inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
             />
+            <View style={{ marginBottom: 16 }}>
+                <Text style={{ color: 'red' }}>{errorMessage}</Text>
+            </View>
             <View style={{ marginBottom: 16 }}>
                 <Button title="Log in" onPress={handleLogin} />
             </View>

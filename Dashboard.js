@@ -27,10 +27,10 @@ const Dashboard = () => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
 
-    function hideLoading() {
+    function hideLoading(time) {
         setTimeout(() => {
             setLoading(false);
-        }, 2000);
+        }, time);
     }
 
     async function setNumbers(budd, curm, cury) {
@@ -49,7 +49,7 @@ const Dashboard = () => {
         setLoading(true);
         let today = new Date();
         getData(today.getMonth() + 1, today.getFullYear());
-        hideLoading();
+        hideLoading(3000);
     }, []);
 
     function handleMonthChange(day) {
@@ -99,6 +99,7 @@ const Dashboard = () => {
                 await setColors(docSnap.data(), currm, curry);
                 setFormVisible(false);
             } else {
+                await setColors({}, currm, curry);
             }
         })
     }
@@ -121,6 +122,7 @@ const Dashboard = () => {
         });
     }
     async function handleFormSubmit() {
+        setFormVisible(false);
         setLoading(true);
         const dd = new Date(selectedDate);
         const currm = dd.getMonth() + 1;
@@ -131,7 +133,7 @@ const Dashboard = () => {
             [selectedDate]: { budget: selectedBudget }
         }, { merge: true });
         await getData(currm, curry);
-        hideLoading();
+        hideLoading(2000);
     }
     function handleDayLongPress(day) {
         setSelectedDate(day.dateString);
@@ -145,7 +147,7 @@ const Dashboard = () => {
         const cury = budget.year;
         await deleteData(curm, cury);
         setShowModal(false)
-        hideLoading();
+        hideLoading(2000);
     }
     async function handleLogout() {
         try {
@@ -169,58 +171,56 @@ const Dashboard = () => {
     )
     return (
         <View >
-            {loading ?
-                <ActivityModal />
-                :
-                <View>
-                    {confirmModal()}
-                    <DashboardHeader budget={budget} />
-                    <Calendar
-                        style={styles.Calendar}
-                        markingType={'custom'}
-                        markedDates={budgetData}
-                        onDayPress={(day) => handleDatePress(day)}
-                        onDayLongPress={day => handleDayLongPress(day)}
-                        onMonthChange={(month) => { handleMonthChange(month) }}
-                        renderArrow={(direction) => {
-                            if (direction == 'left') {
-                                return (<Text style={styles.arrows}>{'<'}</Text>)
-                            } else {
-                                return (<Text style={styles.arrows}>{'>'}</Text>)
-                            }
-                        }}
-                    />
-                    <Modal visible={modalVisible} style={styles.modal}>
-                        <View>
-                            <Text style={styles.budgetView}>budget for {selectedDate} : {selectedBudget}</Text>
-                            <Button title="OK" onPress={() => { setModalVisible(false) }} />
-                        </View>
-                    </Modal>
-                    <Modal isVisible={formVisible} style={styles.modal}>
-                        <View style={styles.formContainer}>
-                            <Text style={styles.formHeader}>Enter budget for {selectedDate}</Text>
-                            <TextInput
-                                style={styles.formInput}
-                                value={selectedBudget}
-                                onChangeText={handleBudgetChange}
-                            />
-                            <Button title="Submit" onPress={handleFormSubmit} />
-                        </View>
-                    </Modal>
+            <ActivityModal loading={loading} />
+            <View>
+                {confirmModal()}
+                <DashboardHeader budget={budget} />
+                <Calendar
+                    style={styles.Calendar}
+                    markingType={'custom'}
+                    markedDates={budgetData}
+                    onDayPress={(day) => handleDatePress(day)}
+                    onDayLongPress={day => handleDayLongPress(day)}
+                    onMonthChange={(month) => { handleMonthChange(month) }}
+                    renderArrow={(direction) => {
+                        if (direction == 'left') {
+                            return (<Text style={styles.arrows}>{'<'}</Text>)
+                        } else {
+                            return (<Text style={styles.arrows}>{'>'}</Text>)
+                        }
+                    }}
+                />
+                <Modal visible={modalVisible} style={styles.modal}>
+                    <View>
+                        <Text style={styles.budgetView}>budget for {selectedDate} : {selectedBudget}</Text>
+                        <Button title="OK" onPress={() => { setModalVisible(false) }} />
+                    </View>
+                </Modal>
+                <Modal isVisible={formVisible} style={styles.modal}>
+                    <View style={styles.formContainer}>
+                        <Text style={styles.formHeader}>Enter budget for {selectedDate}</Text>
+                        <TextInput
+                            style={styles.formInput}
+                            value={selectedBudget}
+                            onChangeText={handleBudgetChange}
+                        />
+                        <Button title="Submit" onPress={handleFormSubmit} />
+                    </View>
+                </Modal>
 
-                    <View style={{ marginBottom: 16 }}>
-                        <Button
-                            title="Reset this month"
-                            onPress={() => setShowModal(true)}
-                        />
-                    </View>
-                    <View style={{ marginBottom: 16 }}>
-                        <Button
-                            title="Logout"
-                            onPress={handleLogout}
-                        />
-                    </View>
-                </View>}
+                <View style={{ marginBottom: 16 }}>
+                    <Button
+                        title="Reset this month"
+                        onPress={() => setShowModal(true)}
+                    />
+                </View>
+                <View style={{ marginBottom: 16 }}>
+                    <Button
+                        title="Logout"
+                        onPress={handleLogout}
+                    />
+                </View>
+            </View>
         </View>
     );
 };

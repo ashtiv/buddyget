@@ -95,6 +95,16 @@ const styles = StyleSheet.create({
         color: 'blue',
         fontWeight: '1000px',
         fontSize: 20
+    },
+    activityIndicatorStyle:
+    {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        opacity: 0.5,
+        height: '100%',
+        width: '100%'
     }
 });
 export default styles;
