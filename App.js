@@ -7,6 +7,7 @@ import Dashboard from './Dashboard';
 import { LogBox } from 'react-native';
 import { ReduxProvider } from './store';
 import SignupForm from './SignupForm';
+import LoginForm2 from './LoginForm2';
 
 
 function HomeScreen() {
@@ -28,9 +29,9 @@ function App() {
         <Stack.Navigator>
 
           <Stack.Screen
-            name="Login"
-            component={LoginForm}
-            options={{ title: 'Login', headerLeft: null, headerTitleAlign: 'center' }}
+            name="Login2"
+            component={LoginForm2}
+            options={{ title: 'Login2', headerLeft: null, headerTitleAlign: 'center' }}
           />
           <Stack.Screen
             name="Signup"
