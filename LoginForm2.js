@@ -2,11 +2,16 @@ import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { Button } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
     const [request, response, promptAsync] = Google.useAuthRequest({
         expoClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
         iosClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
@@ -25,6 +30,9 @@ export default function App() {
             })
                 .then(response => {
                     console.log(response.data);
+                    const user = response.data;
+                    dispatch({ type: 'LOGIN', user })
+                    navigation.navigate('Dashboard');
                 })
                 .catch(error => {
                     console.error(error);

@@ -92,7 +92,7 @@ const Dashboard = () => {
     }
 
     async function getData(currm, curry) {
-        const userId = loginUser.uid;
+        const userId = loginUser.id;
         const docRef = doc(db, "budgets", userId);
         getDoc(docRef).then(async docSnap => {
             if (docSnap.exists()) {
@@ -127,7 +127,7 @@ const Dashboard = () => {
         const dd = new Date(selectedDate);
         const currm = dd.getMonth() + 1;
         const curry = dd.getFullYear();
-        const userId = loginUser.uid;
+        const userId = loginUser.id;
         const parentRef = doc(db, "budgets", userId);
         await setDoc(parentRef, {
             [selectedDate]: { budget: selectedBudget }
@@ -153,7 +153,7 @@ const Dashboard = () => {
         try {
             await auth.signOut();
             dispatch({ type: 'LOGOUT' });
-            navigation.navigate('Login');
+            navigation.navigate('Login2');
         } catch (error) {
             console.error(error);
         }
