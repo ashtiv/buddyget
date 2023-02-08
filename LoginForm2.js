@@ -14,8 +14,7 @@ export default function App() {
     const navigation = useNavigation();
     const [request, response, promptAsync] = Google.useAuthRequest({
         expoClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
-        iosClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
-        androidClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+        androidClientId: '454714096775-ifeu4fu2rdqliocukp69as8r6en5u6ge.apps.googleusercontent.com',
         webClientId: '454714096775-78ium6fo1thl0ag4a5t05tlv54hp5o6v.apps.googleusercontent.com',
     });
 
@@ -29,7 +28,6 @@ export default function App() {
                 }
             })
                 .then(response => {
-                    console.log(response.data);
                     const user = response.data;
                     dispatch({ type: 'LOGIN', user })
                     navigation.navigate('Dashboard');
@@ -42,7 +40,6 @@ export default function App() {
 
     return (
         <Button
-            disabled={!request}
             title="Login"
             onPress={() => {
                 promptAsync();

@@ -4,7 +4,6 @@ import { Button, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import GoogleButton from 'react-google-button';
 import { auth } from './firebase';
 import { useSelector, useDispatch } from 'react-redux';
 import ActivityModal from './ActivityModal';

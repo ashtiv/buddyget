@@ -104,7 +104,7 @@ const Dashboard = () => {
         })
     }
     async function deleteData(currm, curry) {
-        const userId = loginUser.uid;
+        const userId = loginUser.id;
         const docRef = doc(db, "budgets", userId);
         getDoc(docRef).then(async docSnap => {
             if (docSnap.exists) {
@@ -143,10 +143,10 @@ const Dashboard = () => {
     }
     async function resetThisMonth() {
         setLoading(true);
+        setShowModal(false)
         const curm = budget.month;
         const cury = budget.year;
         await deleteData(curm, cury);
-        setShowModal(false)
         hideLoading(2000);
     }
     async function handleLogout() {
