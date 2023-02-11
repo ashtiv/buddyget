@@ -1,89 +1,76 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Button, Input } from 'react-native-elements';
+import * as React from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { TouchableOpacity, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from './firebase';
-import { useSelector, useDispatch } from 'react-redux';
-import ActivityModal from './ActivityModal';
+import { useDispatch } from 'react-redux';
+import GoogleButton from './assets/google-signin-button.png'
 
+WebBrowser.maybeCompleteAuthSession();
 
-function LoginForm() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigation = useNavigation();
-    const [errorMessage, setErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false);
-    const provider = new GoogleAuthProvider();
+const USER_KEY = 'user';
+
+export default function LoginForm() {
     const dispatch = useDispatch();
-    const loginUser = useSelector(state => state.loginUser);
-
-    async function handleLogin() {
-        setLoading(true);
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                dispatch({ type: 'LOGIN', user })
-                navigation.navigate('Dashboard');
-                setLoading(false);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMess = error.message;
-                setErrorMessage(errorMess);
-                setLoading(false);
-            });
-    }
-
-    function handleSignup() {
-        navigation.navigate('Signup');
-    }
-
-    const styles = StyleSheet.create({
-        link: {
-            color: 'blue',
-            textDecorationLine: 'underline',
-            fontSize: 20,
-        },
+    const navigation = useNavigation();
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        expoClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+        androidClientId: '454714096775-ifeu4fu2rdqliocukp69as8r6en5u6ge.apps.googleusercontent.com',
+        webClientId: '454714096775-78ium6fo1thl0ag4a5t05tlv54hp5o6v.apps.googleusercontent.com',
     });
 
+    React.useEffect(() => {
+        // Check if user is already logged in
+        AsyncStorage.getItem(USER_KEY)
+            .then(userString => {
+                if (userString) {
+                    const user = JSON.parse(userString);
+                    dispatch({ type: 'LOGIN', user });
+                    navigation.navigate('Dashboard');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        if (response?.type === 'success') {
+            const { accessToken } = response.authentication;
+
+            axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+                .then(response => {
+                    const user = response.data;
+                    dispatch({ type: 'LOGIN', user });
+                    // Store user in local storage
+                    AsyncStorage.setItem(USER_KEY, JSON.stringify(user))
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    navigation.navigate('Dashboard');
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }, [response]);
+
     return (
-        <View style={{ padding: 24 }}>
-            <ActivityModal loading={loading} />
-            <Input
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCompleteType="email"
-                label="Email"
-                labelStyle={{ fontSize: 18, marginBottom: 8 }}
-                inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
+        <TouchableOpacity disabled={!request}
+            title="Login"
+            onPress={() => {
+                promptAsync();
+            }}
+            style={{ padding: 5 }}
+        >
+            <Image
+                style={{ height: 60, marginTop: 10, border: 'black solid 2px', borderRadius: '3px' }}
+                source={GoogleButton}
             />
-            <Input
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Password"
-                secureTextEntry={true}
-                autoCapitalize="none"
-                autoCompleteType="password"
-                label="Password"
-                labelStyle={{ fontSize: 18, marginBottom: 8 }}
-                inputStyle={{ borderWidth: 1, borderColor: '#ccc', padding: 8, fontSize: 16 }}
-            />
-            <View style={{ marginBottom: 16 }}>
-                <Text style={{ color: 'red' }}>{errorMessage}</Text>
-            </View>
-            <View style={{ marginBottom: 16 }}>
-                <Button title="Log in" onPress={handleLogin} />
-            </View>
-            <View style={{ marginBottom: 16 }}>
-                <Button title="Create account" onPress={handleSignup} />
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 }
-
-export default LoginForm;

@@ -2,12 +2,10 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginForm from './LoginForm';
 import Dashboard from './Dashboard';
 import { LogBox } from 'react-native';
 import { ReduxProvider } from './store';
-import SignupForm from './SignupForm';
-import LoginForm2 from './LoginForm2';
+import LoginForm from './LoginForm';
 
 
 function HomeScreen() {
@@ -30,13 +28,8 @@ function App() {
 
           <Stack.Screen
             name="Login2"
-            component={LoginForm2}
+            component={LoginForm}
             options={{ title: 'Login', headerLeft: null, headerTitleAlign: 'center' }}
-          />
-          <Stack.Screen
-            name="Signup"
-            component={SignupForm}
-            options={{ title: 'Sign Up', headerLeft: null, headerTitleAlign: 'center' }}
           />
           <Stack.Screen
             name="Dashboard"
