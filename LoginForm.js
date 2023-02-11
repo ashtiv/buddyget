@@ -27,8 +27,10 @@ export default function LoginForm() {
             .then(userString => {
                 if (userString) {
                     const user = JSON.parse(userString);
-                    dispatch({ type: 'LOGIN', user });
-                    navigation.navigate('Dashboard');
+                    if (user?.id != null && user?.id != undefined) {
+                        dispatch({ type: 'LOGIN', user });
+                        navigation.navigate('Dashboard');
+                    }
                 }
             })
             .catch(error => {
@@ -68,7 +70,7 @@ export default function LoginForm() {
             style={{ padding: 5 }}
         >
             <Image
-                style={{ height: 60, marginTop: 10, border: 'black solid 2px', borderRadius: '3px' }}
+                style={{ height: 60, marginTop: 10, border: 'black solid 2px', borderRadius: 1 }}
                 source={GoogleButton}
             />
         </TouchableOpacity>
