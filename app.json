@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Buzzet",
+    "displayName": "Buzzet",
     "slug": "buddyget",
     "version": "1.0.0",
     "orientation": "portrait",

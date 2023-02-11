@@ -70,7 +70,7 @@ export default function LoginForm() {
             style={{ padding: 5 }}
         >
             <Image
-                style={{ height: 60, marginTop: 10, border: 'black solid 2px', borderRadius: 1 }}
+                style={{ height: 60, marginTop: 10, borderColor: 'black', borderWidth: 1, borderRadius: 1 }}
                 source={GoogleButton}
             />
         </TouchableOpacity>
