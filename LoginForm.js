@@ -67,7 +67,7 @@ export default function LoginForm() {
             onPress={() => {
                 promptAsync();
             }}
-            style={{ padding: 5 }}
+            style={{ padding: 5, alignItems: 'center' }}
         >
             <Image
                 style={{ height: 60, marginTop: 10, borderColor: 'black', borderWidth: 1, borderRadius: 1 }}
