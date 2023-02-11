@@ -11,9 +11,11 @@ import DashboardHeader from './DashboardHeader';
 import { auth } from './firebase';
 import { useNavigation } from '@react-navigation/native';
 import ActivityModal from './ActivityModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+const USER_KEY = 'user';
 const Dashboard = () => {
     const [budget, setBudget] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -152,6 +154,13 @@ const Dashboard = () => {
     async function handleLogout() {
         try {
             await auth.signOut();
+            await AsyncStorage.removeItem(USER_KEY)
+                .then(() => {
+                    console.log('User data removed from local storage');
+                })
+                .catch(error => {
+                    console.error(error);
+                });
             dispatch({ type: 'LOGOUT' });
             navigation.navigate('Login2');
         } catch (error) {

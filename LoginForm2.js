@@ -1,13 +1,16 @@
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { Button } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import GoogleButton from './assets/google-signin-button.png'
 
 WebBrowser.maybeCompleteAuthSession();
+
+const USER_KEY = 'user';
 
 export default function App() {
     const dispatch = useDispatch();
@@ -19,6 +22,19 @@ export default function App() {
     });
 
     React.useEffect(() => {
+        // Check if user is already logged in
+        AsyncStorage.getItem(USER_KEY)
+            .then(userString => {
+                if (userString) {
+                    const user = JSON.parse(userString);
+                    dispatch({ type: 'LOGIN', user });
+                    navigation.navigate('Dashboard');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
         if (response?.type === 'success') {
             const { accessToken } = response.authentication;
 
@@ -29,7 +45,12 @@ export default function App() {
             })
                 .then(response => {
                     const user = response.data;
-                    dispatch({ type: 'LOGIN', user })
+                    dispatch({ type: 'LOGIN', user });
+                    // Store user in local storage
+                    AsyncStorage.setItem(USER_KEY, JSON.stringify(user))
+                        .catch(error => {
+                            console.error(error);
+                        });
                     navigation.navigate('Dashboard');
                 })
                 .catch(error => {
@@ -39,11 +60,17 @@ export default function App() {
     }, [response]);
 
     return (
-        <Button
+        <TouchableOpacity disabled={!request}
             title="Login"
             onPress={() => {
                 promptAsync();
             }}
-        />
+            style={{ padding: 5 }}
+        >
+            <Image
+                style={{ height: 60, marginTop: 10, border: 'black solid 2px', borderRadius: '3px' }}
+                source={GoogleButton}
+            />
+        </TouchableOpacity>
     );
 }

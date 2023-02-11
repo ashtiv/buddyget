@@ -31,7 +31,7 @@ function App() {
           <Stack.Screen
             name="Login2"
             component={LoginForm2}
-            options={{ title: 'Login2', headerLeft: null, headerTitleAlign: 'center' }}
+            options={{ title: 'Login', headerLeft: null, headerTitleAlign: 'center' }}
           />
           <Stack.Screen
             name="Signup"
