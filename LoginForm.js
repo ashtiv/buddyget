@@ -36,6 +36,19 @@ export default function LoginForm() {
     }
 
     React.useEffect(() => {
+        AsyncStorage.getItem(USER_KEY)
+            .then(userString => {
+                if (userString) {
+                    const user = JSON.parse(userString);
+                    if (user?.id != null && user?.id != undefined) {
+                        dispatch({ type: 'LOGIN', user });
+                        navigation.navigate('Dashboard');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
         if (response?.type === 'success') {
             setLoading(true);
             const { accessToken } = response.authentication;
