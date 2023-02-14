@@ -139,11 +139,14 @@ const Dashboard = () => {
             await setDoc(parentRef, {
                 [selectedDate]: { budget: bud }
             }, { merge: true });
+            await getData(currm, curry);
+            hideLoading(2000);
         }
         else {
+            alert('Please enter a valid number');
+            setFormVisible(true);
+            setLoading(0);
         }
-        await getData(currm, curry);
-        hideLoading(2000);
     }
     function handleDayLongPress(day) {
         setSelectedDate(day.dateString);
