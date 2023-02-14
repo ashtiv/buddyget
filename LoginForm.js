@@ -24,7 +24,7 @@ export default function LoginForm() {
 
 
     const [request, response, promptAsync] = Google.useAuthRequest({
-        expoClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+        expoClientId: '454714096775-rctpubkajm8dh4vcsi13pd90fd02u9rr.apps.googleusercontent.com',
         androidClientId: '454714096775-ifeu4fu2rdqliocukp69as8r6en5u6ge.apps.googleusercontent.com',
         webClientId: '454714096775-78ium6fo1thl0ag4a5t05tlv54hp5o6v.apps.googleusercontent.com',
     });
