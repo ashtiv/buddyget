@@ -136,7 +136,7 @@ const Dashboard = () => {
         const parentRef = doc(db, "budgets", userId);
         if (parseFloat(selectedBudget) != NaN) {
             await setDoc(parentRef, {
-                [selectedDate]: { budget: selectedBudget }
+                [selectedDate]: { budget: parseFloat(selectedBudget) }
             }, { merge: true });
         }
         else {
