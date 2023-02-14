@@ -11,3 +11,10 @@ Features
 
 
 ### Get the app [here](https://github.com/ashtiv/buddyget/releases/download/untagged-3347aa515b7f37e09ab2/Buzzet.apk).
+
+
+### Screenshots 
+
+* ![screenshot1](/assets/screenshots/s1.png)
+* ![screenshot2](/assets/screenshots/s2.png)
+* ![screenshot3](/assets/screenshots/s3.png)
