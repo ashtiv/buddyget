@@ -44,7 +44,7 @@ const Dashboard = () => {
         let budgetSum = 0;
         for (let i in monthArr) {
             let bud = parseFloat(budd[monthArr[i]].budget);
-            if (bud != NaN) {
+            if (!isNaN(bud)) {
                 budgetSum += bud;
             }
         }
@@ -134,9 +134,10 @@ const Dashboard = () => {
         const curry = dd.getFullYear();
         const userId = loginUser.id;
         const parentRef = doc(db, "budgets", userId);
-        if (parseFloat(selectedBudget) != NaN) {
+        let bud = parseFloat(selectedBudget);
+        if (!isNaN(bud)) {
             await setDoc(parentRef, {
-                [selectedDate]: { budget: parseFloat(selectedBudget) }
+                [selectedDate]: { budget: bud }
             }, { merge: true });
         }
         else {
