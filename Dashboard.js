@@ -43,7 +43,10 @@ const Dashboard = () => {
         });
         let budgetSum = 0;
         for (let i in monthArr) {
-            budgetSum += parseFloat(budd[monthArr[i]].budget);
+            let bud = parseFloat(budd[monthArr[i]].budget);
+            if (bud != NaN) {
+                budgetSum += bud;
+            }
         }
         setBudget({ budget: budgetSum, avg: makeaverageDaily(budgetSum, curm, cury), month: curm, year: cury });
     }
@@ -131,9 +134,13 @@ const Dashboard = () => {
         const curry = dd.getFullYear();
         const userId = loginUser.id;
         const parentRef = doc(db, "budgets", userId);
-        await setDoc(parentRef, {
-            [selectedDate]: { budget: selectedBudget }
-        }, { merge: true });
+        if (parseFloat(selectedBudget) != NaN) {
+            await setDoc(parentRef, {
+                [selectedDate]: { budget: selectedBudget }
+            }, { merge: true });
+        }
+        else {
+        }
         await getData(currm, curry);
         hideLoading(2000);
     }

@@ -34,7 +34,7 @@ function App() {
           <Stack.Screen
             name="Dashboard"
             component={Dashboard}
-            options={{ title: 'Dashboard', headerLeft: null, headerTitleAlign: 'center' }}
+            options={{ title: 'Dashboard', headerLeft: () => null, headerTitleAlign: 'center' }}
           />
 
         </Stack.Navigator>
