@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styles from './styles/Dashboard-styles'
 import { db } from './firebase';
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { budgetColor, makeaverageDaily } from "./functions"
+import { budgetColor, makeaverageDaily, isNumber } from "./functions"
 import DashboardHeader from './DashboardHeader';
 import { auth } from './firebase';
 import { useNavigation } from '@react-navigation/native';
@@ -126,6 +126,7 @@ const Dashboard = () => {
             }
         });
     }
+
     async function handleFormSubmit() {
         setFormVisible(false);
         setLoading(true);
@@ -135,7 +136,7 @@ const Dashboard = () => {
         const userId = loginUser.id;
         const parentRef = doc(db, "budgets", userId);
         let bud = parseFloat(selectedBudget);
-        if (!isNaN(bud)) {
+        if (isNumber(selectedBudget)) {
             await setDoc(parentRef, {
                 [selectedDate]: { budget: bud }
             }, { merge: true });
@@ -221,7 +222,7 @@ const Dashboard = () => {
                         <Text style={styles.formHeader}>Enter budget for {selectedDate}</Text>
                         <TextInput
                             style={styles.formInput}
-                            value={selectedBudget}
+                            value={selectedBudget.toString()}
                             onChangeText={handleBudgetChange}
                         />
                         <Button title="Submit" onPress={handleFormSubmit} />

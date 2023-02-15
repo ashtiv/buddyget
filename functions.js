@@ -19,3 +19,7 @@ export function makeaverageDaily(total, month, year) {
         return total / new Date(year, month, 0).getDate();
     }
 }
+export function isNumber(input) {
+    input = input.trim();
+    return !isNaN(Number(input));
+}
