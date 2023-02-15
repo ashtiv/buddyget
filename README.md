@@ -18,4 +18,4 @@ Buzzet is a mobile application that helps you manage your daily and monthly budg
 
 ## Get the app 
 
-You can download the app from [here](https://github.com/ashtiv/buddyget/releases/download/untagged-3347aa515b7f37e09ab2/Buzzet.apk).
+You can download the android app from [here](https://github.com/ashtiv/buddyget/releases/download/Buzzet/Buzzet.apk).
