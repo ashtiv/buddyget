@@ -136,7 +136,7 @@ const Dashboard = () => {
         const userId = loginUser.id;
         const parentRef = doc(db, "budgets", userId);
         let bud = parseFloat(selectedBudget);
-        if (isNumber(selectedBudget)) {
+        if (isNumber(selectedBudget) && (!isNaN(bud))) {
             await setDoc(parentRef, {
                 [selectedDate]: { budget: bud }
             }, { merge: true });
@@ -224,6 +224,7 @@ const Dashboard = () => {
                             style={styles.formInput}
                             value={selectedBudget.toString()}
                             onChangeText={handleBudgetChange}
+                            inputType="textVisiblePassword"
                         />
                         <Button title="Submit" onPress={handleFormSubmit} />
                     </View>
